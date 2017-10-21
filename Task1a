@@ -1,0 +1,41 @@
+ model Project_task
+ 	/*
+ 	Model of Project_task
+ 	Author: Group 9
+ 	Date:02.10.2017
+ 	*/ 
+ 	// Table 1: Parameters
+ 	
+	// Parameters
+	parameter Real alpha = 1  "Stoichiometric constant";
+ 	parameter Real kO = exp(8750/350)/60 "preexponential factor, 1/min";
+	parameter Real E = 8750 "Activation tempreture, K";
+ 	parameter Real H = 5e4 "Reaction enthalpy, J/mol";
+ 	parameter Real V = 100   "Vessel volume, L";
+	parameter Real rh_o = 1000  "Density of reactor liquid, g/L";
+	parameter Real cp = 0.239 "Specific heat capacity of reactor fluid, J/(g K)";
+	parameter Real UA = 5e4/60 "Heat transfer parameter, J/(min K)";
+ 	// Table 2: Operation condition
+ 	// Initial state parameters
+ 	parameter Real C_A0 = 0.5 "Initial value, concentration of A, mol/L";
+ 	parameter Real T0 = 350 "Initial value, tempreture, K";
+	parameter Real n_A0 = 50 "Initial value, mole number, mol";
+	
+	// Define state variables
+ 	Real C_A(start = C_A0) "Concentration, mol/L";
+ 	Real T(start = T0) "Tempreture, K";
+	// Define *input
+ 	Real V_n "input, Volumetric feed flow, L/min";
+	Real C_A_i_n "input, Influent, mol/L";
+	Real T_i_n "input influent tempreture, K";
+	Real T_c_n "input coolant tempreture, K";
+ equation 
+ 	V_n = 100/60;
+	C_A_i_n = 1;
+	T_i_n = 350;
+	T_c_n = 300;
+		
+ 	der(C_A) = (V_n/V)*(C_A_i_n-C_A) - kO*exp(-E/T)*(C_A)^alpha;
+	der(T) = (V_n/ V)*(T_i_n-T) + ((H*kO*exp(-E/T)*(C_A)^alpha)/(rh_o*cp)) + (UA*(T_c_n-T)/(rh_o*V*cp));
+	
+end Project_task;
